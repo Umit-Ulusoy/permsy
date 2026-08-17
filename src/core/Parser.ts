@@ -1,6 +1,33 @@
-import type { PermissionConfig } from '../types.ts';
+import type { CommandRule, PermissionConfig } from '../types.ts';
 
 export class Parser {
+    private static readonly VALID_RULES = ["rolesOnly", "usersOnly", "permissionsOnly", "channelsOnly", "denyMessage"];
+
+    public static parseCommandRules(rules: CommandRule): CommandRule {
+
+            if (!rules || typeof rules !== 'object' || Array.isArray(rules)) {
+        throw new Error("Invalid command rules: Rules must be an object.");
+    }
+    
+        const parsedRules: CommandRule = {};
+
+        for (const ruleKey of Object.keys(rules)) {
+            if (!this.VALID_RULES.includes(ruleKey)) {
+                throw new Error(`Unknown rule definition: '${ruleKey}'. Valid rules: ${this.VALID_RULES.join(', ')}`);
+            }
+
+            if (ruleKey === "denyMessage") {
+                if (typeof rules[ruleKey] !== "string") {
+                    throw new Error(`Invalid rule: denyMessage must be a string`);
+                }
+                parsedRules[ruleKey] = rules[ruleKey];
+            } else {
+                parsedRules[ruleKey] = this.normalizeRuleValue(rules[ruleKey]);
+            }
+        }
+
+        return parsedRules;
+    }
 
     public static normalizeRuleValue(value: string | Array<string | { id: string, name?: string }>): string[] {
         if (value === undefined || value === null) {
