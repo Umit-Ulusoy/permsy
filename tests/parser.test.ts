@@ -55,7 +55,7 @@ describe('parseCommandRules()', () => {
     };
 
     expect(() => Parser.parseCommandRules(commandRules)).toThrow(
-      /Invalid rule: denyMessage must be a string/
+      /Invalid command rule: denyMessage must be a string/
     );
   });
 
@@ -92,7 +92,7 @@ const rules = {
 };
 
     expect(() => Parser.parseCommandRules(rules)).toThrow(
-      /Unknown rule definition/
+      /Unknown command rule definition/
     );
   });
 
@@ -119,3 +119,79 @@ expect(Parser.parseCommandRules(rules)).toEqual(expected);
   });
 
 });
+
+describe('parseGroupRules()', () => {
+
+  it('should throw an error when given a denyMessage with number', () => {
+    const commandRules = {
+      denyMessage: 123
+    };
+
+    expect(() => Parser.parseGroupRules(commandRules)).toThrow(
+      /Invalid group rule: denyMessage must be a string/
+    );
+  });
+
+    it('should throw an error when given null or undefined', () => {
+    expect(() => Parser.parseGroupRules(null as any)).toThrow(
+      /Invalid group rules: Rules must be an object/
+    );
+    expect(() => Parser.parseGroupRules(undefined as any)).toThrow(
+      /Invalid group rules: Rules must be an object/
+    );
+  });
+
+  it('should return an empty object when given an empty object', () => {
+expect(Parser.parseGroupRules({})).toEqual({});
+  });
+
+  it('should throw an error when given an array', () => {
+    expect(() => Parser.parseGroupRules([])).toThrow(
+      /Invalid group rules: Rules must be an object/
+    )
+  });
+
+  it('should throw an error when given a number', () => {
+    expect(() => Parser.parseGroupRules(123)).toThrow(
+      /Invalid group rules: Rules must be an object/
+    )
+  });
+
+  it('should throw an error when given an invalid rule', () => {
+
+const rules = {
+  rolesOnly: "123,456",
+  onlyYou: "YOU"
+};
+
+    expect(() => Parser.parseGroupRules(rules)).toThrow(
+      /Unknown group rule definition/
+    );
+  });
+
+  it('should return parsed rules', () => {
+
+    const rules = {
+      commands: "ban, kick",
+      rolesOnly: "123, 456,    789",
+      usersOnly: [
+        { id: "1", name: "Angry Cat" },
+        { id: "2", name: "smily cat" }
+      ],
+channelsOnly: ["123", "456"],
+permissionsOnly: ["ADMINISTRATOR", "BAN_USER"]
+};
+
+    const expected = {
+      commands: ["ban", "kick"],
+      rolesOnly: ["123", "456", "789"],
+      usersOnly: ["1", "2"],
+      channelsOnly: ["123", "456"],
+      permissionsOnly: ["ADMINISTRATOR", "BAN_USER"]
+    };
+
+expect(Parser.parseGroupRules(rules)).toEqual(expected);
+  });
+
+});
+

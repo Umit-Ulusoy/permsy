@@ -2,32 +2,40 @@ import type { CommandRule, PermissionConfig } from '../types.ts';
 
 export class Parser {
     private static readonly VALID_RULES = ["rolesOnly", "usersOnly", "permissionsOnly", "channelsOnly", "denyMessage"];
+    private static readonly VALID_GROUP_RULES = ["commands", "rolesOnly", "usersOnly", "permissionsOnly", "channelsOnly", "denyMessage"];
 
-    public static parseCommandRules(rules: CommandRule): CommandRule {
+public static parseGroupRules(rules: CommandRule): CommandRule {
+    return this.parseRules(rules, this.VALID_GROUP_RULES, "group");
+}
 
-            if (!rules || typeof rules !== 'object' || Array.isArray(rules)) {
-        throw new Error("Invalid command rules: Rules must be an object.");
+public static parseCommandRules(rules: CommandRule): CommandRule {
+    return this.parseRules(rules, this.VALID_RULES, "command");
+}
+
+private static parseRules(rules: CommandRule, validRules: string[], errorPrefix: string): CommandRule {
+    if (!rules || typeof rules !== 'object' || Array.isArray(rules)) {
+        throw new Error(`Invalid ${errorPrefix} rules: Rules must be an object.`);
     }
-    
-        const parsedRules: CommandRule = {};
 
-        for (const ruleKey of Object.keys(rules)) {
-            if (!this.VALID_RULES.includes(ruleKey)) {
-                throw new Error(`Unknown rule definition: '${ruleKey}'. Valid rules: ${this.VALID_RULES.join(', ')}`);
-            }
+    const parsedRules: CommandRule = {};
 
-            if (ruleKey === "denyMessage") {
-                if (typeof rules[ruleKey] !== "string") {
-                    throw new Error(`Invalid rule: denyMessage must be a string`);
-                }
-                parsedRules[ruleKey] = rules[ruleKey];
-            } else {
-                parsedRules[ruleKey] = this.normalizeRuleValue(rules[ruleKey]);
-            }
+    for (const ruleKey of Object.keys(rules)) {
+        if (!validRules.includes(ruleKey)) {
+            throw new Error(`Unknown ${errorPrefix} rule definition: '${ruleKey}'. Valid rules: ${validRules.join(', ')}`);
         }
 
-        return parsedRules;
+        if (ruleKey === "denyMessage") {
+            if (typeof rules[ruleKey] !== "string") {
+                throw new Error(`Invalid ${errorPrefix} rule: denyMessage must be a string`);
+            }
+            parsedRules[ruleKey] = rules[ruleKey];
+        } else {
+            parsedRules[ruleKey] = this.normalizeRuleValue(rules[ruleKey]);
+        }
     }
+
+    return parsedRules;
+}
 
     public static normalizeRuleValue(value: string | Array<string | { id: string, name?: string }>): string[] {
         if (value === undefined || value === null) {
