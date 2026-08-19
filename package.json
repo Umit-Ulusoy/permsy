@@ -1,0 +1,37 @@
+{
+  "name": "nextgen-permy",
+  "version": "1.0.0",
+  "description": "A modern permission and command management engine for Node.js applications",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "test": "vitest run",
+    "coverage": "vitest run --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Umit-Ulusoy/nextgen-permy.git"
+  },
+  "keywords": [
+    "permissions",
+    "discord",
+    "command-handler",
+    "rbac",
+    "security",
+    "typescript"
+  ],
+  "author": "Ümit Ulusoy",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/Umit-Ulusoy/nextgen-permy/issues"
+  },
+  "homepage": "https://github.com/Umit-Ulusoy/nextgen-permy#readme",
+  "devDependencies": {
+    "@vitest/coverage-v8": "^4.1.10",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.10"
+  }
+}
