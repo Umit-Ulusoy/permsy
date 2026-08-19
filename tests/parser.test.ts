@@ -195,3 +195,208 @@ expect(Parser.parseGroupRules(rules)).toEqual(expected);
 
 });
 
+describe('parsePermissionConfig', () => {
+
+  it('should throw an error when given defaultDenyMessage as a number', () => {
+    const permsConfig = {
+      defaultDenyMessage: 123,
+      commands: {}
+    };
+
+    expect(() => Parser.parsePermissionConfig(permsConfig)).toThrow(
+      /Invalid configuration: 'defaultDenyMessage' must be a non-empty string/
+    );
+  });
+
+  it('should throw an error when given defaultDenyMessage as an array', () => {
+    const permsConfig = {
+      defaultDenyMessage: [],
+      commands: {}
+    };
+
+    expect(() => Parser.parsePermissionConfig(permsConfig)).toThrow(
+      /Invalid configuration: 'defaultDenyMessage' must be a non-empty string/
+    );
+  });
+
+  it('should throw an error when given defaultDenyMessage as an object', () => {
+    const permsConfig = {
+      defaultDenyMessage: {},
+      commands: {}
+    };
+
+    expect(() => Parser.parsePermissionConfig(permsConfig)).toThrow(
+      /Invalid configuration: 'defaultDenyMessage' must be a non-empty string/
+    );
+  });
+
+  it('should return an error requiring defaultDenyMessage field when given an empty object', () => {
+    expect(() => Parser.parsePermissionConfig({})).toThrow(
+      /Invalid configuration: 'defaultDenyMessage' must be a non-empty string/
+    );
+  });
+
+  it('should throw an error when given an array instead of an object', () => {
+    expect(() => Parser.parsePermissionConfig([])).toThrow(
+      /Invalid configuration: Configuration must be an object/
+    );
+  });
+
+  it('should throw an error when given undefined or null values', () => {
+    expect(() => Parser.parsePermissionConfig(null)).toThrow(
+      /Invalid configuration: Configuration must be an object/
+    );
+    expect(() => Parser.parsePermissionConfig(undefined)).toThrow(
+      /Invalid configuration: Configuration must be an object/
+    );
+  });
+
+  it('should throw an error when given an invalid command category', () => {
+    const permsConfig = {
+      defaultDenyMessage: "Angry Cat",
+      commands: {
+        prefixes: {},
+        slashes: {},
+        groups: [],
+        smilingCats: []
+      }
+    };
+
+    expect(() => Parser.parsePermissionConfig(permsConfig)).toThrow(
+      /Invalid category type:/
+    );
+  });
+
+  it('should throw an error when given groups as an object', () => {
+    
+    const permsConfig = {
+      defaultDenyMessage: "Smily Cat",
+      commands: {
+        groups: {}
+      }
+    }
+
+      expect(() => Parser.parsePermissionConfig(permsConfig)).toThrow(
+        /Invalid category type: 'groups' must be an array/
+      );
+  });
+
+    it('should throw an error when given groups as a string', () => {
+    
+    const permsConfig = {
+      defaultDenyMessage: "Smily Cat",
+      commands: {
+        groups: ""
+      }
+    }
+
+      expect(() => Parser.parsePermissionConfig(permsConfig)).toThrow(
+        /Invalid category type: 'groups' must be an array/
+      );
+  });
+
+    it('should throw an error when given groups as a number', () => {
+    
+    const permsConfig = {
+      defaultDenyMessage: "Smily Cat",
+      commands: {
+        groups: 123
+      }
+    }
+
+      expect(() => Parser.parsePermissionConfig(permsConfig)).toThrow(
+        /Invalid category type: 'groups' must be an array/
+      );
+  });
+
+    it('should throw an error when given groups as a null or undefined', () => {
+   
+    const permsConfig = {
+      defaultDenyMessage: "Smily Cat",
+      commands: {
+        groups: null
+      }
+    }
+
+      expect(() => Parser.parsePermissionConfig(permsConfig)).toThrow(
+        /Invalid category type: 'groups' must be an array/
+      );
+
+      permsConfig.commands.groups = undefined;
+
+            expect(() => Parser.parsePermissionConfig(permsConfig)).toThrow(
+        /Invalid category type: 'groups' must be an array/
+      );
+  });
+
+    it('should successfully parse and return a valid permission config when given valid data', () => {
+    
+    const permsConfig = {
+      defaultDenyMessage: "Smily Cat",
+      commands: {
+        prefixes: {
+          warnUser: {
+            rolesOnly: [
+              { id: "1221", name: "Moderator" },
+            ],
+            denyMessage: "Angry Cat with blue eyes"
+          }
+        },
+        slashes: {
+                    playMusic: {
+            channelsOnly: ["123456"],
+            denyMessage: "Smily Cat with a headphone"
+          }
+        },
+        groups: [
+          {
+            commands: ["addMoney", "reboot"],
+            usersOnly: ["123", "456"],
+            rolesOnly: [
+              { id: "321", name: "Admin Cat" }
+            ],
+          }, {
+            commands: "banUser, kickUser",
+            permissionsOnly: "ADMINISTRATOR",
+            denyMessage: "Angry Cat"
+          }
+        ]
+      }
+    };
+
+        const expected = {
+      defaultDenyMessage: "Smily Cat",
+      commands: {
+        prefixes: {
+          warnUser: {
+            rolesOnly: ["1221"],
+            denyMessage: "Angry Cat with blue eyes"
+          }
+        },
+        slashes: {
+                    playMusic: {
+            channelsOnly: ["123456"],
+            denyMessage: "Smily Cat with a headphone"
+          }
+        },
+        groups: [
+          {
+            commands: ["addMoney", "reboot"],
+            usersOnly: ["123", "456"],
+            rolesOnly: ["321"],
+          }, {
+            commands: ["banUser", "kickUser"],
+            permissionsOnly: ["ADMINISTRATOR"],
+            denyMessage: "Angry Cat"
+          }
+        ]
+      }
+    };
+
+expect(Parser.parsePermissionConfig(permsConfig)).toEqual(expected);
+  });
+
+  it('', () => {});
+  it('', () => {});
+
+});
