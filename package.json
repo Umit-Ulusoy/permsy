@@ -1,18 +1,24 @@
 {
-  "name": "nextgen-permy",
+  "name": "permsy",
   "version": "1.0.0",
   "description": "A modern permission and command management engine for Node.js applications",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
   "scripts": {
     "build": "tsc",
-    "prepublishOnly": "npm run build",
     "test": "vitest run",
     "coverage": "vitest run --coverage"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Umit-Ulusoy/nextgen-permy.git"
+    "url": "git+https://github.com/Umit-Ulusoy/permsy.git"
   },
   "keywords": [
     "permissions",
@@ -26,11 +32,13 @@
   "license": "ISC",
   "type": "module",
   "bugs": {
-    "url": "https://github.com/Umit-Ulusoy/nextgen-permy/issues"
+    "url": "https://github.com/Umit-Ulusoy/permsy/issues"
   },
-  "homepage": "https://github.com/Umit-Ulusoy/nextgen-permy#readme",
+  "homepage": "https://github.com/Umit-Ulusoy/permsy#readme",
   "devDependencies": {
+    "@types/node": "^22.20.3",
     "@vitest/coverage-v8": "^4.1.10",
+    "tsup": "^8.5.1",
     "typescript": "^7.0.2",
     "vitest": "^4.1.10"
   }
