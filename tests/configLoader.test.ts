@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { loadPermConfig, _internal } from '../src/core/configLoader';
+import { loadPermissionConfig, _internal } from '../src/core/configLoader';
 import { access } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -9,14 +9,14 @@ vi.mock('node:fs/promises', () => ({
   constants: { F_OK: 0 },
 }));
 
-describe('loadPermConfig tests', () => {
+describe('loadPermissionConfig tests', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it('Should throw proper error once a config file not found', async () => {
     vi.mocked(access).mockRejectedValueOnce(new Error('ENOENT'));
-    await expect(loadPermConfig('laughing-file.ts')).rejects.toThrow(
+    await expect(loadPermissionConfig('laughing-file.ts')).rejects.toThrow(
       /Permission config file not found/
     );
   });
@@ -24,7 +24,7 @@ describe('loadPermConfig tests', () => {
   it('Should throw an error once file doesn\' export permissionConfig', async () => {
     vi.mocked(access).mockResolvedValueOnce(undefined);
     vi.spyOn(_internal, 'dynamicImport').mockResolvedValueOnce({});
-    await expect(loadPermConfig('laughing-permConfig')).rejects.toThrow(
+    await expect(loadPermissionConfig('laughing-permConfig')).rejects.toThrow(
       /'permissionConfig' \(or default\) export not found/
     );
   });
@@ -38,7 +38,7 @@ describe('loadPermConfig tests', () => {
     vi.spyOn(_internal, 'dynamicImport').mockResolvedValueOnce({
       permissionConfig: mockConfig
     });
-    const result = await loadPermConfig('smiling-config.ts');
+    const result = await loadPermissionConfig('smiling-config.ts');
     expect(result).toEqual(mockConfig);
   });
 
@@ -51,7 +51,7 @@ describe('loadPermConfig tests', () => {
     vi.spyOn(_internal, 'dynamicImport').mockResolvedValueOnce({
       default: mockConfig
     });
-    const result = await loadPermConfig('default-config.ts');
+    const result = await loadPermissionConfig('default-config.ts');
     expect(result).toEqual(mockConfig);
   });
 
@@ -60,7 +60,7 @@ describe('loadPermConfig tests', () => {
     vi.spyOn(_internal, 'dynamicImport').mockResolvedValueOnce({
       permissionConfig: ['invalid-type-array']
     });
-    await expect(loadPermConfig('array-config.ts')).rejects.toThrow(
+    await expect(loadPermissionConfig('array-config.ts')).rejects.toThrow(
       /The exported configuration must be a valid object/
     );
   });
@@ -70,7 +70,7 @@ describe('loadPermConfig tests', () => {
     vi.spyOn(_internal, 'dynamicImport').mockResolvedValueOnce({
       permissionConfig: 'Hello, I am that string'
     });
-    await expect(loadPermConfig('that-stringy-config.ts')).rejects.toThrow(
+    await expect(loadPermissionConfig('that-stringy-config.ts')).rejects.toThrow(
       /The exported configuration must be a valid object/
     );
   });
@@ -78,7 +78,7 @@ describe('loadPermConfig tests', () => {
   it('Should throw a wrapped error if dynamicImport throws an unexpected error', async () => {
     vi.mocked(access).mockResolvedValueOnce(undefined);
     vi.spyOn(_internal, 'dynamicImport').mockRejectedValueOnce(new Error('SyntaxError in file'));
-    await expect(loadPermConfig('broken-file.ts')).rejects.toThrow(
+    await expect(loadPermissionConfig('broken-file.ts')).rejects.toThrow(
       /Failed to load config file: SyntaxError in file/
     );
   });
@@ -95,7 +95,7 @@ describe('loadPermConfig tests', () => {
     const expectedPath = path.resolve(process.cwd(), 'permy.config.ts');
     const expectedUrl = pathToFileURL(expectedPath).href;
 
-    await loadPermConfig();
+    await loadPermissionConfig();
 
     expect(dynamicImportSpy).toHaveBeenCalledWith(expectedUrl);
   });
