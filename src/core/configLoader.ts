@@ -1,7 +1,7 @@
 import { access, constants } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import path from 'node:path';
-import { PermissionConfig } from '../types.ts';
+import type { PermissionConfigInput } from '../types.js';
 
 export const _internal = {
   async dynamicImport(fileUrl: string) {
@@ -9,7 +9,7 @@ export const _internal = {
   }
 };
 
-export async function loadPermConfig(configPath?: string): Promise<PermissionConfig> {
+export async function loadPermissionConfig(configPath?: string): Promise<PermissionConfigInput> {
   const targetPath = configPath 
     ? path.resolve(configPath) 
     : path.resolve(process.cwd(), 'permy.config.ts');

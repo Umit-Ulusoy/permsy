@@ -124,6 +124,7 @@ describe('parseGroupRules()', () => {
 
   it('should throw an error when given a denyMessage with number', () => {
     const commandRules = {
+commands: [],
       denyMessage: 123
     };
 
@@ -141,9 +142,11 @@ describe('parseGroupRules()', () => {
     );
   });
 
-  it('should return an empty object when given an empty object', () => {
-expect(Parser.parseGroupRules({})).toEqual({});
-  });
+  it('should throw an error when commands is missing', () => {
+    expect(() => Parser.parseGroupRules({})).toThrow(
+        /Invalid group rule: 'commands' array is required/
+    );
+});
 
   it('should throw an error when given an array', () => {
     expect(() => Parser.parseGroupRules([])).toThrow(
@@ -160,6 +163,7 @@ expect(Parser.parseGroupRules({})).toEqual({});
   it('should throw an error when given an invalid rule', () => {
 
 const rules = {
+commands: [],
   rolesOnly: "123,456",
   onlyYou: "YOU"
 };
